@@ -64,6 +64,7 @@ Print results
 
 Portolio 1 Short Term:
     * EBIX, VZ, ARCT, INMD, PFE
+
 Portfolio 2 Long Term: 
     * NVDA, AOSL, NTES, DELL, MRK
 
