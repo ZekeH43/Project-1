@@ -59,3 +59,13 @@ Print results
 17. Create a table of the highs, lows and averages for each MC Simulation for each ticker
 18. Create a short term trading portfolio and a long tern trading portfolio based on the information given in the MC Simulations
 19. Summarize viabilty of a short term and long term investing strategy using the MC Simulation data found.
+
+#####Results:
+
+Portolio 1 Short Term:
+    * EBIX, VZ, ARCT, INMD, PFE
+Portfolio 2 Long Term: 
+    * NVDA, AOSL, NTES, DELL, MRK
+
+    Not included:
+    SCYX
