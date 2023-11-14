@@ -71,4 +71,5 @@ Portfolio 2 Long Term:
     Not included:
     SCYX
 
+   
     We determined, with the data given with the MC Simulations, that placing these stocks in their respective portfolios would have the greatest potential benefit while curbing potential loss. We did not include SCYX in any portfolio due to a stock split occurring in 2020 that tainted the MC Simulation. It is also important to remember that MC Simulations should not be relied on completely to make investing decisions but should instead be used to analyze the potential risk of a stock to gain a clearer picture. A MC Simulation can predict a variety of outcomes, but it often cannot predict the unpredictable and the further out you simulate the more unpredictable it gets.
