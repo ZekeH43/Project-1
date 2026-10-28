@@ -1,75 +1,126 @@
-# Project-1
- Risk and Reward
+# Risk and Reward
 
-You have been hired as a financial analyst for an investment firm. Today, your boss stopped by your desk and asked for you and your colleagues help.
+[![Python checks](https://github.com/ZekeH43/Project-1/actions/workflows/python-checks.yml/badge.svg)](https://github.com/ZekeH43/Project-1/actions/workflows/python-checks.yml)
 
-She explained that a client, that is has shown interest in the tech and pharmacutical sectors of the market, would like to talk about investment opportunities and create trading portfolios centered around the short and long term. She mentioned this would be a good opportunity to use a MC Simulation to visualize the potential risk and reward of our chosen stocks.
+An educational Python project that turns historical price CSVs into reproducible Monte Carlo portfolio scenarios. It demonstrates data cleaning, NumPy simulation, pandas analysis, visualization, input validation, and automated testing.
 
-Your job is to build visualizations and MC Simulations to predict the potental losses and gains of varying Pharmacutical and tech stocks(6 high and low volatility of each sector) and create a short term and long term portfolio that maximizes our clients gains while minimizing their losses. The client has 15,000 dollars (based on a $100,000 yearly salary) to invest in these portfolios
+**Start here:** run the CLI below, explore [Risk_Simulator.ipynb](Risk_Simulator.ipynb), then follow the [code walkthrough](docs/WALKTHROUGH.md).
 
-## Instructions
+The included snapshot ends on **November 1, 2023**. These are scenarios under a simplified model, not current market forecasts or investment recommendations. Source price adjustments are unverified; see the [data notes](docs/DATA.md).
 
-Using the starter code complete the following steps.
+## What the project does
 
-First set up the steps for a Monte Carlo simulation for an individual stock, in this case we used NVDA
+- Parses currency-formatted closing prices, sorts dates, and aligns assets on shared observations.
+- Fits historical log-return means and covariance, then generates seeded, correlated scenarios.
+- Compares time horizons using actual simulated means, medians, quantiles, and loss fractions.
+- Exports a summary, run settings, source hashes, and optional charts.
+- Shares one implementation between the command line and documented notebooks.
 
-1. Import the necessary libraries and dependencies.
+No account, API key, or network connection is needed after installing dependencies. The original project explored short- and long-term portfolios as an educational assignment. This version focuses on reproducibility and explaining the assumptions; it does not optimize or recommend a portfolio.
 
-2. Create a `.env` file in the same directory as your starter code.
+## Quick start
 
-3. Inside the `.env` file, include a variable for `ALPACA_API_KEY` and `ALPACA_SECRET_KEY` to access the Alpaca API.
+Use **Python 3.11 or 3.12** and Git. Clone the repository and enter it:
 
-4. Setup the Alpaca API environment
+```bash
+git clone https://github.com/ZekeH43/Project-1.git
+cd Project-1
+```
 
-5. Using yfinance, query the database and get 5 year's worth of daily stock information for the following stock:
+**Windows PowerShell:**
 
-    * `NVDA - Nvidia Corp
+```powershell
+py -3.12 -m venv .venv
+.venv\Scripts\python -m pip install -r requirements.txt
+.venv\Scripts\python -m risk_reward --plots
+```
 
-6. Retrieve daily data of stock information
+For subsequent commands, use `.venv\Scripts\python` wherever the instructions say `python`. This avoids needing to change PowerShell's activation policy.
 
-7. Reset the index and remove Adjusted Close column then reprint the remaining columns
+**WSL, Linux, or macOS:**
 
-8. Find the closing stock price for each ticker and, using the stock budget of $2500 and the last quote, find the current value and amount of the ticker
+```bash
+python3.12 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python -m risk_reward --plots
+```
 
+If using Python 3.11, substitute `py -3.11` or `python3.11` when creating the environment. Run the remaining commands from the repository root.
 
-9. Set your `timeframe`, `start` and `end` dates, and your `ticker` information!
-10. Set up a MC Simulation using 500 simulations, 252 trading days and 1 year
-11. Optional: use warnings.filterwarnings("ignore") to filter out the warning messages from running the MC Simulation
-12. Calculate cumulative return to run the MC Simulation
-13. Run a plot of the simulation
-14.  Set initial investment
-Use the lower and upper `95%` confidence intervals to calculate the range of the possible outcomes of our $2500
-Print results
-15. Define a function using the code for NVDA stock earlier 
-16. Use this function to run MC Simulations for the following tickers for 1,3,5,8,10,and 15 year intervals
+The default run uses NVDA, 500 paths, 252 trading steps, seed 42, and a starting value of 2,500. It prints the historical date range and writes these files to the ignored `artifacts/` directory:
 
-    * ARCT - Arcturus Therapeutics Holdings Inc
-    * INMD - Inmode Ltd
-    * MRK - Merck & Co Inc
-    * BMY - Bristol-Myers Squibb Co
-    * PFE - Pfizer Inc.
-    * SCYX - SCYNEXIS Inc
-    * AOSL - Alpha and Omega Semiconductor Ltd
-    * DELL - Dell Technologies Inc
-    * EBIX - Ebix Inc
-    * NTES - NetEase Inc
-    * NVDA - Nvidia Corps
-    * VZ - Verizon Communications Inc.
+| File | Contents |
+| --- | --- |
+| `summary.csv` | One row per requested horizon, with growth factors and terminal values |
+| `metadata.json` | Model, settings, dependency versions, fitting window, and input SHA-256 hashes |
+| `paths.png` | First 100 paths for the first requested horizon; requires `--plots` |
+| `distribution.png` | All terminal outcomes for that horizon; requires `--plots` |
 
-17. Create a table of the highs, lows and averages for each MC Simulation for each ticker
-18. Create a short term trading portfolio and a long tern trading portfolio based on the information given in the MC Simulations
-19. Summarize viabilty of a short term and long term investing strategy using the MC Simulation data found.
+## Try a portfolio
 
-#####Results:
+```bash
+python -m risk_reward --tickers NVDA PFE --weights 0.5 0.5 --years 1 3 5 --investment 15000 --plots
+python -m risk_reward --help
+```
 
-Portolio 1 Short Term:
-    * EBIX, VZ, ARCT, INMD, PFE
+Weights follow ticker order, must be nonnegative, and must sum to one. Omitting weights gives equal weights. Each simulated day assumes rebalancing to these weights. This example demonstrates a two-asset calculation, not a suggested allocation.
 
-Portfolio 2 Long Term: 
-    * NVDA, AOSL, NTES, DELL, MRK
+Use `--simulations`, `--seed`, `--output`, or `--data-dir` to change the defaults. A custom data directory must contain files named `<TICKER>_data.csv` with the schema in [DATA.md](docs/DATA.md). A run overwrites matching output filenames in the chosen directory, so use separate output directories to keep comparisons.
 
-    Not included:
-    SCYX
+An example summary and its provenance are committed in [reports/example](reports/example/README.md). The main notebook uses the same settings. A growth factor of `1.12` means a simulated 12% gain; a factor of `0.80` means a simulated 20% loss. Quantiles describe the generated distribution, **not a guaranteed real-world probability**.
 
-   
-    We determined, with the data given with the MC Simulations, that placing these stocks in their respective portfolios would have the greatest potential benefit while curbing potential loss. We did not include SCYX in any portfolio due to a stock split occurring in 2020 that tainted the MC Simulation. It is also important to remember that MC Simulations should not be relied on completely to make investing decisions but should instead be used to analyze the potential risk of a stock to gain a clearer picture. A MC Simulation can predict a variety of outcomes, but it often cannot predict the unpredictable and the further out you simulate the more unpredictable it gets.
+## Explore the notebooks
+
+```bash
+python -m pip install -r requirements-notebook.txt
+python -m jupyter lab Risk_Simulator.ipynb
+```
+
+Select **Restart Kernel and Run All Cells**. Source notebooks intentionally contain no saved outputs; running them creates the figures and tables.
+
+| Notebook | Purpose |
+| --- | --- |
+| [Risk_Simulator.ipynb](Risk_Simulator.ipynb) | Main walkthrough: data inspection, two-asset scenarios, plots, and interpretation |
+| [Simulation_Concepts.ipynb](Simulation_Concepts.ipynb) | Small synthetic examples of seeds, growth factors, and summary statistics |
+| Single-ticker notebooks, such as [AOSL_1.ipynb](AOSL_1.ipynb) | Compare 1-, 3-, 5-, 8-, 10-, and 15-year scenarios using the shared implementation |
+| [NTES_1.ipynb](NTES_1.ipynb) | Explains the missing NTES CSV and skips calculation until that exact dataset is supplied |
+
+`NETTF_data.csv` is a different symbol and is never substituted for NTES. NETTF is available through the CLI. Long horizons are retained as a modeling exercise; compounding uncertain historical assumptions can produce extreme values.
+
+## Code map
+
+| Path | Responsibility |
+| --- | --- |
+| [risk_reward/data.py](risk_reward/data.py) | Read, validate, align, and fingerprint source data |
+| [MCForecastTools.py](MCForecastTools.py) | `MCSimulation`: sample paths, summarize outcomes, and plot |
+| [risk_reward/analysis.py](risk_reward/analysis.py) | Run each horizon and convert growth factors into values |
+| [risk_reward/__main__.py](risk_reward/__main__.py) | Parse CLI arguments and save results |
+| [tests](tests) | Regression tests for data, math, reproducibility, CLI outputs, and ticker mappings |
+| [scripts/check_notebooks.py](scripts/check_notebooks.py) | Execute every notebook with a fresh Jupyter kernel |
+
+Read [WALKTHROUGH.md](docs/WALKTHROUGH.md) to follow one request through the code and practice explaining it. [MODEL.md](docs/MODEL.md) gives the equations and tradeoffs.
+
+## Development checks
+
+```bash
+python -m pip install -r requirements-dev.txt
+python -m ruff check .
+python -m ruff format --check .
+python -m pytest -q
+python scripts/check_notebooks.py
+```
+
+GitHub Actions runs these checks on Python 3.11 and 3.12. Notebook execution saves copies under `artifacts/notebooks/` and leaves the source files unchanged. The NTES notebook checks its intentional missing-data path; it does not produce NTES results without an NTES CSV.
+
+## Changes from the original experiment
+
+The original notebooks duplicated API setup and simulation code. This refactor corrects copied ticker references, per-horizon result reuse, weight validation, and mutable summary labels. It removes live-data dependencies, generated checkpoints, bytecode, and duplicate historical summary files.
+
+The model also changes from independent normal **simple returns** to correlated normal **log returns**. This preserves fitted cross-asset covariance and positive asset growth factors. Old and new results are different experiments, not a performance comparison.
+
+The original `Data_1.csv`, `Book1.xlsx`, and `Risk & Reward.pptx` remain historical artifacts; their claims and numbers are not outputs of this implementation. The raw source CSVs are preserved unchanged. The tracked credentials file has been removed and `.env` files are ignored. Any credentials previously committed must be revoked and replaced if still active; deleting a file does not remove earlier Git history.
+
+## Limits
+
+This model assumes fixed fitted parameters, normal log returns, independent daily draws, 252 trading steps per year, and daily rebalancing. It omits trading costs, taxes, separate dividend cash flows, and parameter uncertainty. Missing sessions and unverified split/dividend adjustments can distort the fit. A seed makes sampling reproducible; it does not establish forecast accuracy. See [MODEL.md](docs/MODEL.md) and [DATA.md](docs/DATA.md) before interpreting results.
